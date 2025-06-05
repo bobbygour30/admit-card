@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRegistration } from '../contexts/RegistrationContext';
 import { CreditCard, CheckCircle, AlertCircle, ChevronRight } from 'lucide-react';

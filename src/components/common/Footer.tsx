@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Mail, Phone, Globe } from 'lucide-react';
 
 const Footer: React.FC = () => {

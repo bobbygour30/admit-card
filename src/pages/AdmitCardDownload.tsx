@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import  { useRef, useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
 import { useRegistration } from '../contexts/RegistrationContext';
 import { FileText, Search, Download, Send, AlertCircle } from 'lucide-react';
 import { generatePDF } from '../utils/pdfGenerator';
 
 const AdmitCardDownload: React.FC = () => {
   const { registrationData } = useRegistration();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

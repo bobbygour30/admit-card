@@ -1,4 +1,6 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import  { createContext, useState, useContext } from 'react';
+import type { ReactNode } from 'react';
+
 
 interface Center {
   name: string;

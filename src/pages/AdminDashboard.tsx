@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Users, FileText, LogOut } from 'lucide-react';
@@ -16,7 +16,7 @@ interface Registration {
 const AdminDashboard: React.FC = () => {
   const { isAdmin, logout } = useAuth();
   const navigate = useNavigate();
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [registrations, ] = useState<Registration[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
