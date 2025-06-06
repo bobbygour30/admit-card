@@ -272,7 +272,7 @@ const AdmitCardDownload: React.FC = () => {
                       <p className="text-sm text-gray-600">
                         CBT Roll No.: {registrationData.applicationNumber}
                       </p>
-                      <p className="text-sm text-gray-600">State: Jharkhand</p>
+                      <p className="text-sm text-gray-600">Admit Card for: Harit Union</p>
                       <p className="text-sm text-gray-600">
                         Aadhaar No.:{" "}
                         {registrationData.personalInfo.aadhaarNumber}
