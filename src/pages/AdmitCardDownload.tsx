@@ -2,30 +2,7 @@ import { useRef, useState } from "react";
 import { useRegistration } from "../contexts/RegistrationContext";
 import { FileText, Search, Download, Send, AlertCircle } from "lucide-react";
 import { generatePDF } from "../utils/pdfGenerator";
-
-// Define the shape of personalInfo including the union field
-interface PersonalInfo {
-  union?: string;
-  name: string;
-  fatherName: string;
-  motherName: string;
-  dob: string;
-  gender: string;
-  aadhaarNumber: string;
-  selectedPosts?: string[];
-  districtPreferences?: string[];
-}
-
-// Define the shape of registrationData
-interface RegistrationData {
-  applicationNumber?: string;
-  personalInfo: PersonalInfo;
-  examCenter?: string;
-  examShift?: string;
-  photo?: string;
-  signature?: string;
-  paymentStatus?: boolean;
-}
+import type { RegistrationData } from "../types"; // Import shared type
 
 const AdmitCardDownload: React.FC = () => {
   const { registrationData } = useRegistration() as { registrationData: RegistrationData };
@@ -159,7 +136,7 @@ const AdmitCardDownload: React.FC = () => {
                         <path
                           className="opacity-75"
                           fill="currentColor"
-                          d="M4 0a8 8 0 018 8v4c3.042 0 5.824-1.135 7.938-3l-2.647-3A7.962 7.962 0 0112 0z"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
                       Searching...
@@ -252,7 +229,7 @@ const AdmitCardDownload: React.FC = () => {
                             <path
                               className="opacity-75"
                               fill="currentColor"
-                              d="M4 0a8 8 0 018 8v4c3.042 0 5.824-1.135 7.938-3l-2.647-3A7.962 7.962 0 0112 0z"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                             ></path>
                           </svg>
                           Sending...
@@ -309,8 +286,7 @@ const AdmitCardDownload: React.FC = () => {
 
                   <div className="bg-gray-100 p-4 border-b">
                     <div className="flex flex-col md:flex-row items-center justify-between">
-                      <div className="flex items-center mb-4 md:mb-0">
-                      </div>
+                      <div className="flex items-center mb-4 md:mb-0"></div>
                       <div className="text-right">
                         <p className="text-sm text-gray-600">
                           CBT Roll No.: {registrationData.applicationNumber}

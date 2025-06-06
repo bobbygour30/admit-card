@@ -1,33 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
-interface RegistrationData {
-  personalInfo: {
-    union?: string; // Added union field
-    name: string;
-    fatherName: string;
-    motherName: string;
-    dob: string;
-    gender: string;
-    email: string;
-    mobile: string;
-    address: string;
-    aadhaarNumber: string;
-    selectedPosts?: string[];
-    districtPreferences?: string[];
-  };
-  photo: string | null;
-  signature: string | null;
-  examCenter: string | null;
-  examShift: string | null;
-  applicationNumber: string | null;
-  paymentStatus: boolean;
-  transactionNumber: string | null;
-  documents: {
-    idProof: string | null;
-    addressProof: string | null;
-  };
-}
+import type { RegistrationData } from '../types'; // Import shared type
 
 export const generatePDF = async (element: HTMLElement, data: RegistrationData) => {
   try {
@@ -62,12 +35,9 @@ export const generatePDF = async (element: HTMLElement, data: RegistrationData) 
 };
 
 const sendAdmitCardEmail = (data: RegistrationData) => {
-  // In a real application, you would use a service like EmailJS or an API call
-  // to send an email with the admit card details
   console.log('Sending email with admit card to:', data.personalInfo.email);
   
-  // This is a mock function that would normally call an email service
-  // Example with union field included:
+  // Mock function for email service
   /*
   emailjs.send('service_id', 'template_id', {
     to_email: data.personalInfo.email,
@@ -76,7 +46,7 @@ const sendAdmitCardEmail = (data: RegistrationData) => {
     exam_center: data.examCenter,
     exam_date: '12/06/2025',
     exam_shift: data.examShift,
-    union: data.personalInfo.union || 'Harit Union' // Include union in email
+    union: data.personalInfo.union || 'Harit Union'
   });
   */
 };
