@@ -1,12 +1,10 @@
 import { useRef, useState } from "react";
-// import { useNavigate } from 'react-router-dom';
 import { useRegistration } from "../contexts/RegistrationContext";
 import { FileText, Search, Download, Send, AlertCircle } from "lucide-react";
 import { generatePDF } from "../utils/pdfGenerator";
 
 const AdmitCardDownload: React.FC = () => {
   const { registrationData } = useRegistration();
-  // const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -241,237 +239,247 @@ const AdmitCardDownload: React.FC = () => {
                 </div>
               </div>
 
-              <div
-                ref={admitCardRef}
-                className="border rounded-lg overflow-hidden"
-                id="admit-card"
-              >
-                <div className="bg-gray-100 p-4 border-b">
-                  <div className="flex flex-col md:flex-row items-center justify-between">
-                    <div className="flex items-center mb-4 md:mb-0">
-                      <div className="mr-4">
-                        <img
-                          src="/dav-logo.png"
-                          alt="College Logo"
-                          className="w-20 h-20"
-                        />
+              <div className="admit-card-container" style={{ width: '210mm' }}>
+                <div ref={admitCardRef} className="border rounded-lg overflow-hidden">
+                  <div className="text-[#254d79] text-center p-4 font-serif">
+                    <h1 className="text-lg font-semibold">
+                      Recruitment to Various Posts
+                    </h1>
+                    <p className="uppercase text-sm font-medium">For</p>
+                    <p className="uppercase text-base font-bold tracking-wide">
+                      Various Vegetable Cooperative Societies
+                    </p>
+                    <p className="text-xs font-medium">
+                      (Registered Under Bihar Cooperative Society Act 1935)
+                    </p>
+                    <p className="text-sm font-medium">
+                      2nd Floor, Vikas Bhawan, New Secretariat, Patna-800015
+                    </p>
+                    <p className="uppercase text-sm font-medium">By</p>
+                    <p className="uppercase text-base font-bold mb-3">
+                      Isha Protectional Security Guard Pvt Ltd
+                    </p>
+                    <div className="flex justify-center gap-10 text-sm">
+                      <span className="text-black">
+                        <strong>Website:</strong> https://www.ishaprotectional.com
+                      </span>
+                      <span className="text-black">
+                        <strong>Email:</strong> ipsguard@yahoo.com
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-100 p-4 border-b">
+                    <div className="flex flex-col md:flex-row items-center justify-between">
+                      <div className="flex items-center mb-4 md:mb-0">
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-800">
+                            DAV College Managing Committee
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Chitra Gupta Road
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            New Delhi-110055
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-600">
+                          CBT Roll No.: {registrationData.applicationNumber}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Admit Card for: Harit Union
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Aadhaar No.: {registrationData.personalInfo.aadhaarNumber}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <div className="text-center mb-6">
+                      <h2 className="text-xl font-bold">
+                        Admit Card for Computer Based Test (CBT): June 2025
+                      </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="md:col-span-2">
+                        <div className="grid grid-cols-1 gap-1">
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Centre of CBT Exam
+                            </div>
+                            <div className="w-1/2 truncate">
+                              : {registrationData.examCenter || "DAV PUBLIC SCHOOL, RANCHI"}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Shift & Date of CBT exam
+                            </div>
+                            <div className="w-1/2 truncate">
+                              : {registrationData.examShift || "A (9:00 AM - 10:00 AM, 12-06-2025)"}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Time of gate-entry
+                            </div>
+                            <div className="w-1/2">
+                              : 30 minutes before shift start time
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Candidate's Name
+                            </div>
+                            <div className="w-1/2 truncate">
+                              : {registrationData.personalInfo.name}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Date of Birth
+                            </div>
+                            <div className="w-1/2">
+                              : {formatDate(registrationData.personalInfo.dob)}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Gender
+                            </div>
+                            <div className="w-1/2">
+                              : {registrationData.personalInfo.gender?.toUpperCase()}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Father's/Husband's Name
+                            </div>
+                            <div className="w-1/2 truncate">
+                              : {registrationData.personalInfo.fatherName}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Mother's Name
+                            </div>
+                            <div className="w-1/2 truncate">
+                              : {registrationData.personalInfo.motherName}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              Post Applied For
+                            </div>
+                            <div className="w-1/2 truncate">
+                              : {registrationData.personalInfo.selectedPosts?.join(", ")}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            <div className="w-1/2 font-semibold">
+                              District Preferences
+                            </div>
+                            <div className="w-1/2 truncate">
+                              : {registrationData.personalInfo.districtPreferences?.join(", ")}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-1 flex flex-col items-center justify-start">
+                        <div className="border h-40 w-full max-w-[8rem] mb-4 flex items-center justify-center">
+                          {registrationData.photo ? (
+                            <img
+                              src={registrationData.photo}
+                              alt="Candidate Photo"
+                              className="max-h-full max-w-full"
+                            />
+                          ) : (
+                            <div className="text-center text-gray-500 text-xs bg-gray-200 h-full w-full flex items-center justify-center">
+                              No Photo Available
+                            </div>
+                          )}
+                        </div>
+                        <div className="border h-16 w-full max-w-[8rem] flex items-center justify-center">
+                          {registrationData.signature ? (
+                            <img
+                              src={registrationData.signature}
+                              alt="Candidate Signature"
+                              className="max-h-full max-w-full"
+                            />
+                          ) : (
+                            <div className="text-center text-gray-500 text-xs bg-gray-200 h-full w-full flex items-center justify-center">
+                              No Signature Available
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs mt-1 text-gray-600">
+                          Signature of the Candidate
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <h3 className="font-bold uppercase mb-3">
+                        Important Instructions for Candidates:-
+                      </h3>
+                      <ol className="list-decimal list-inside text-sm space-y-2">
+                        <li>
+                          The Admit Card is provisional, subject to verification
+                          of particulars during document verification.
+                        </li>
+                        <li>
+                          Candidates are advised to reach the CBT 2025 exam centre
+                          at least 30 minutes before the exam starts, to avoid any
+                          unexpected delays.
+                        </li>
+                        <li>
+                          Candidates should report directly to the examination
+                          hall/room, as per details mentioned on the Admit Card.
+                        </li>
+                        <li>
+                          No candidate will be allowed entry to the exam lab after
+                          commencement of Test.
+                        </li>
+                        <li>
+                          No candidate will be allowed to carry any electronic
+                          devices including mobile phones, bluetooth devices,
+                          portable music players, calculators etc. inside the
+                          examination hall.
+                        </li>
+                        <li>
+                          Candidates are not allowed to carry any personal
+                          belongings or prohibited items including electronic
+                          devices, mobile phone, calculator etc. inside the
+                          examination hall.
+                        </li>
+                      </ol>
+                    </div>
+
+                    <div className="mt-6 flex justify-between">
+                      <div>
+                        <div className="h-16 border-b border-black w-40">
+                          {registrationData.signature && (
+                            <img
+                              src={registrationData.signature}
+                              alt="Candidate Signature"
+                              className="h-16"
+                            />
+                          )}
+                        </div>
+                        <p className="text-sm mt-1">Signature of the candidate</p>
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-800">
-                          DAV College Managing Committee
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Chitra Gupta Road
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          New Delhi-110055
+                        <div className="h-16 border-b border-black w-40"></div>
+                        <p className="text-sm mt-1">
+                          (To be signed in presence of the Invigilator)
                         </p>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-600">
-                        CBT Roll No.: {registrationData.applicationNumber}
-                      </p>
-                      <p className="text-sm text-gray-600">Admit Card for: Harit Union</p>
-                      <p className="text-sm text-gray-600">
-                        Aadhaar No.:{" "}
-                        {registrationData.personalInfo.aadhaarNumber}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="text-center mb-6">
-                    <h2 className="text-xl font-bold">
-                      Admit Card for Computer Based Test (CBT): June 2025
-                    </h2>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-
-                    <div className="col-span-2">
-                      <div className="grid grid-cols-1 gap-3">
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Centre of CBT Exam
-                          </div>
-                          <div className="w-1/2">
-                            :{" "}
-                            {registrationData.examCenter ||
-                              "DAV PUBLIC SCHOOL, RANCHI"}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Shift & Date of CBT exam
-                          </div>
-                          <div className="w-1/2">
-                            :{" "}
-                            {registrationData.examShift ||
-                              "A (9:00 AM - 10:00 AM, 12-06-2025)"}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Time of gate-entry
-                          </div>
-                          <div className="w-1/2">
-                            : 30 minutes before shift start time
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Candidate's Name
-                          </div>
-                          <div className="w-1/2">
-                            : {registrationData.personalInfo.name}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Date of Birth
-                          </div>
-                          <div className="w-1/2">
-                            : {formatDate(registrationData.personalInfo.dob)}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">Gender</div>
-                          <div className="w-1/2">
-                            :{" "}
-                            {registrationData.personalInfo.gender?.toUpperCase()}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Father's/Husband's Name
-                          </div>
-                          <div className="w-1/2">
-                            : {registrationData.personalInfo.fatherName}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Mother's Name
-                          </div>
-                          <div className="w-1/2">
-                            : {registrationData.personalInfo.motherName}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            Post Applied For
-                          </div>
-                          <div className="w-1/2">
-                            :{" "}
-                            {registrationData.personalInfo.selectedPosts?.join(
-                              ", "
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex">
-                          <div className="w-1/2 font-semibold">
-                            District Preferences
-                          </div>
-                          <div className="w-1/2">
-                            :{" "}
-                            {registrationData.personalInfo.districtPreferences?.join(
-                              ", "
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="md:col-span-1 flex flex-col items-center justify-start">
-                      <div className="border h-40 w-32 mb-4 flex items-center justify-center">
-                        {registrationData.photo ? (
-                          <img
-                            src={registrationData.photo}
-                            alt="Candidate Photo"
-                            className="max-h-full max-w-full"
-                          />
-                        ) : (
-                          <div className="text-center text-gray-500 text-xs">
-                            Candidate Photo
-                          </div>
-                        )}
-                      </div>
-                      <div className="border h-16 w-32 flex items-center justify-center">
-                        {registrationData.signature ? (
-                          <img
-                            src={registrationData.signature}
-                            alt="Candidate Signature"
-                            className="max-h-full max-w-full"
-                          />
-                        ) : (
-                          <div className="text-center text-gray-500 text-xs">
-                            Candidate Signature
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-xs mt-1 text-gray-600">
-                        Signature of the Candidate
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <h3 className="font-bold uppercase mb-3">
-                      Important Instructions for Candidates:-
-                    </h3>
-                    <ol className="list-decimal list-inside text-sm space-y-2">
-                      <li>
-                        The Admit Card is provisional, subject to verification
-                        of particulars during document verification.
-                      </li>
-                      <li>
-                        Candidates are advised to reach the CBT 2025 exam centre
-                        at least 30 minutes before the exam starts, to avoid any
-                        unexpected delays.
-                      </li>
-                      <li>
-                        Candidates should report directly to the examination
-                        hall/room, as per details mentioned on the Admit Card.
-                      </li>
-                      <li>
-                        No candidate will be allowed entry to the exam lab after
-                        commencement of Test.
-                      </li>
-                      <li>
-                        No candidate will be allowed to carry any electronic
-                        devices including mobile phones, bluetooth devices,
-                        portable music players, calculators etc. inside the
-                        examination hall.
-                      </li>
-                      <li>
-                        Candidates are not allowed to carry any personal
-                        belongings or prohibited items including electronic
-                        devices, mobile phone, calculator etc. inside the
-                        examination hall.
-                      </li>
-                    </ol>
-                  </div>
-
-                  <div className="mt-6 flex justify-between">
-                    <div>
-                      <div className="h-16 border-b border-black w-40">
-                        {registrationData.signature && (
-                          <img
-                            src={registrationData.signature}
-                            alt="Candidate Signature"
-                            className="h-16"
-                          />
-                        )}
-                      </div>
-                      <p className="text-sm mt-1">Signature of the candidate</p>
-                    </div>
-                    <div>
-                      <div className="h-16 border-b border-black w-40"></div>
-                      <p className="text-sm mt-1">
-                        (To be signed in presence of the Invigilator)
-                      </p>
                     </div>
                   </div>
                 </div>
