@@ -11,9 +11,6 @@ interface RegistrationData {
     email: string;
     mobile: string;
     address: string;
-    aadhaarNumber?: string;
-    selectedPosts?: string[];
-    districtPreferences?: string[];
   };
   photo: string | null;
   signature: string | null;
@@ -32,49 +29,46 @@ export const generatePDF = async (element: HTMLElement, data: RegistrationData) 
   try {
     // Send an email with the admit card
     sendAdmitCardEmail(data);
-
-    // Use the A4-sized container for consistent PDF rendering
-    const container = element.closest('.admit-card-container') || element;
-    const canvas = await html2canvas(container, {
-      scale: window.innerWidth < 768 ? 1 : 2, // Optimize for mobile performance
-      useCORS: true,
-      logging: false,
-      allowTaint: true,
+    
+    // Generate PDF for download
+    const canvas = await html2canvas(element, {
+      scale: 2, // Higher scale for better quality
+      useCORS: true, // Allow loading of images from other domains
+      logging: false, // Disable logging
+      allowTaint: true, // Allow tainted canvas if needed
     });
-
+    
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
-      format: 'a4',
+      format: 'a4'
     });
-
+    
     const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    let imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    // Add first page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    // Add additional pages if content exceeds A4 height
-    while (heightLeft > 0) {
-      pdf.addPage();
-      position -= pageHeight;
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
     pdf.save(`admit_card_${data.applicationNumber}.pdf`);
+    
   } catch (error) {
     console.error('Error generating PDF:', error);
-    alert('Failed to generate PDF. Ensure images are accessible and try again.');
+    alert('There was an error generating the PDF. Please try again.');
   }
 };
 
 const sendAdmitCardEmail = (data: RegistrationData) => {
+  // In a real application, you would use a service like EmailJS or an API call
+  // to send an email with the admit card details
   console.log('Sending email with admit card to:', data.personalInfo.email);
-  // Mock email service
+  
+  // This is a mock function that would normally call an email service
+  // emailjs.send('service_id', 'template_id', {
+  //   to_email: data.personalInfo.email,
+  //   to_name: data.personalInfo.name,
+  //   application_number: data.applicationNumber,
+  //   exam_center: data.examCenter,
+  //   exam_date: '05/03/2024',
+  //   exam_shift: data.examShift
+  // });
 };
