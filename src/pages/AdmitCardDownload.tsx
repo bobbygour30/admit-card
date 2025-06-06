@@ -3,8 +3,32 @@ import { useRegistration } from "../contexts/RegistrationContext";
 import { FileText, Search, Download, Send, AlertCircle } from "lucide-react";
 import { generatePDF } from "../utils/pdfGenerator";
 
+// Define the shape of personalInfo including the union field
+interface PersonalInfo {
+  union?: string;
+  name: string;
+  fatherName: string;
+  motherName: string;
+  dob: string;
+  gender: string;
+  aadhaarNumber: string;
+  selectedPosts?: string[];
+  districtPreferences?: string[];
+}
+
+// Define the shape of registrationData
+interface RegistrationData {
+  applicationNumber?: string;
+  personalInfo: PersonalInfo;
+  examCenter?: string;
+  examShift?: string;
+  photo?: string;
+  signature?: string;
+  paymentStatus?: boolean;
+}
+
 const AdmitCardDownload: React.FC = () => {
-  const { registrationData } = useRegistration();
+  const { registrationData } = useRegistration() as { registrationData: RegistrationData };
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -62,6 +86,16 @@ const AdmitCardDownload: React.FC = () => {
       year: "numeric",
     });
   };
+
+  // Determine header content based on selected union
+  const isTirhutUnion = registrationData.personalInfo.union === "Tirhut Union";
+  const headerTitle = isTirhutUnion
+    ? "Application form for Recruitment to Various Posts"
+    : "Recruitment to Various Posts";
+  const website = isTirhutUnion
+    ? "https://www.sivagroups.com"
+    : "https://www.ishaprotectional.com";
+  const email = isTirhutUnion ? "info@sivagroups.com" : "ipsguard@yahoo.com";
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -125,7 +159,7 @@ const AdmitCardDownload: React.FC = () => {
                         <path
                           className="opacity-75"
                           fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          d="M4 0a8 8 0 018 8v4c3.042 0 5.824-1.135 7.938-3l-2.647-3A7.962 7.962 0 0112 0z"
                         ></path>
                       </svg>
                       Searching...
@@ -218,7 +252,7 @@ const AdmitCardDownload: React.FC = () => {
                             <path
                               className="opacity-75"
                               fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              d="M4 0a8 8 0 018 8v4c3.042 0 5.824-1.135 7.938-3l-2.647-3A7.962 7.962 0 0112 0z"
                             ></path>
                           </svg>
                           Sending...
@@ -243,7 +277,7 @@ const AdmitCardDownload: React.FC = () => {
                 <div ref={admitCardRef} className="border rounded-lg overflow-hidden">
                   <div className="text-[#254d79] text-center p-4 font-serif">
                     <h1 className="text-lg font-semibold">
-                      Recruitment to Various Posts
+                      {headerTitle}
                     </h1>
                     <p className="uppercase text-sm font-medium">For</p>
                     <p className="uppercase text-base font-bold tracking-wide">
@@ -255,16 +289,20 @@ const AdmitCardDownload: React.FC = () => {
                     <p className="text-sm font-medium">
                       2nd Floor, Vikas Bhawan, New Secretariat, Patna-800015
                     </p>
-                    <p className="uppercase text-sm font-medium">By</p>
-                    <p className="uppercase text-base font-bold mb-3">
-                      Isha Protectional Security Guard Pvt Ltd
-                    </p>
+                    {!isTirhutUnion && (
+                      <>
+                        <p className="uppercase text-sm font-medium">By</p>
+                        <p className="uppercase text-base font-bold mb-3">
+                          Isha Protectional Security Guard Pvt Ltd
+                        </p>
+                      </>
+                    )}
                     <div className="flex justify-center gap-10 text-sm">
                       <span className="text-black">
-                        <strong>Website:</strong> https://www.ishaprotectional.com
+                        <strong>Website:</strong> {website}
                       </span>
                       <span className="text-black">
-                        <strong>Email:</strong> ipsguard@yahoo.com
+                        <strong>Email:</strong> {email}
                       </span>
                     </div>
                   </div>
@@ -278,7 +316,7 @@ const AdmitCardDownload: React.FC = () => {
                           CBT Roll No.: {registrationData.applicationNumber}
                         </p>
                         <p className="text-sm text-gray-600">
-                          Admit Card for: Harit Union
+                          Admit Card for: {registrationData.personalInfo.union || 'Harit Union'}
                         </p>
                         <p className="text-sm text-gray-600">
                           Aadhaar No.: {registrationData.personalInfo.aadhaarNumber}

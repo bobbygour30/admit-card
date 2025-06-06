@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import  { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRegistration } from '../contexts/RegistrationContext';
 import { useForm } from 'react-hook-form';
 import { ChevronRight, User, FileText, Upload, AlertCircle } from 'lucide-react';
 
 interface FormData {
+  union: string;
   name: string;
   fatherName: string;
   motherName: string;
@@ -27,31 +29,56 @@ const postOptions = [
   'Supervisor',
   'Support Staff',
   'Data Entry Operator',
-  'Office Boy'
+  'Office Boy',
 ];
 
-const districtOptions = [
+const haritDistrictOptions = [
   'Patna',
   'Vaishali',
   'Samasatipur',
   'Begusarai',
   'Nalanda',
   'Buxar',
-  'Bhojpur'
+  'Bhojpur',
 ];
 
+const tirhutDistrictOptions = [
+  'Sheohar',
+  'East Champaran',
+  'West Champaran',
+  'Muzaffarpur',
+  'Siwan',
+  'Gopalganj',
+  'Saran',
+  'Patna',
+];
+
+const unionOptions = ['Harit Union', 'Tirhut Union'];
+
 const RegistrationForm: React.FC = () => {
-  const { 
-    updatePersonalInfo, 
-    updatePhoto, 
-    updateSignature, 
-    allocateExamCenter, 
-    generateApplicationNumber 
+  const {
+    updatePersonalInfo,
+    updatePhoto,
+    updateSignature,
+    allocateExamCenter,
+    generateApplicationNumber,
   } = useRegistration();
-  
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    resetField,
+  } = useForm<FormData>({
+    defaultValues: {
+      union: '',
+      selectedPosts: [],
+      districtPreferences: [],
+    },
+  });
   const navigate = useNavigate();
-  
+
   const [photo, setPhoto] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
   const [cv, setCv] = useState<string | null>(null);
@@ -63,22 +90,32 @@ const RegistrationForm: React.FC = () => {
   const [workCertError, setWorkCertError] = useState<string | null>(null);
   const [qualCertError, setQualCertError] = useState<string | null>(null);
   const [isAllocating, setIsAllocating] = useState(false);
-  
+
+  const selectedUnion = watch('union');
+
+  // Dynamically select district options based on union
+  const districtOptions = selectedUnion === 'Tirhut Union' ? tirhutDistrictOptions : haritDistrictOptions;
+
+  // Reset districtPreferences when union changes to prevent invalid selections
+  React.useEffect(() => {
+    resetField('districtPreferences');
+  }, [selectedUnion, resetField]);
+
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhotoError(null);
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     if (file.size > 200 * 1024) {
       setPhotoError('Photo size should not exceed 200KB');
       return;
     }
-    
+
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
       setPhotoError('Only JPG and PNG formats are accepted');
       return;
     }
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
@@ -87,22 +124,22 @@ const RegistrationForm: React.FC = () => {
     };
     reader.readAsDataURL(file);
   };
-  
+
   const handleSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSignatureError(null);
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     if (file.size > 100 * 1024) {
       setSignatureError('Signature size should not exceed 100KB');
       return;
     }
-    
+
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
       setSignatureError('Only JPG and PNG formats are accepted');
       return;
     }
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
@@ -111,22 +148,22 @@ const RegistrationForm: React.FC = () => {
     };
     reader.readAsDataURL(file);
   };
-  
+
   const handleCvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCvError(null);
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     if (file.size > 2 * 1024 * 1024) {
       setCvError('File size should not exceed 2MB');
       return;
     }
-    
+
     if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
       setCvError('Only JPG, PNG, or PDF formats are accepted');
       return;
     }
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
@@ -134,22 +171,22 @@ const RegistrationForm: React.FC = () => {
     };
     reader.readAsDataURL(file);
   };
-  
+
   const handleWorkCertUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWorkCertError(null);
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     if (file.size > 2 * 1024 * 1024) {
       setWorkCertError('File size should not exceed 2MB');
       return;
     }
-    
+
     if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
       setWorkCertError('Only JPG, PNG, or PDF formats are accepted');
       return;
     }
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
@@ -157,22 +194,22 @@ const RegistrationForm: React.FC = () => {
     };
     reader.readAsDataURL(file);
   };
-  
+
   const handleQualCertUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQualCertError(null);
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     if (file.size > 2 * 1024 * 1024) {
       setQualCertError('File size should not exceed 2MB');
       return;
     }
-    
+
     if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
       setQualCertError('Only JPG, PNG, or PDF formats are accepted');
       return;
     }
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
@@ -180,35 +217,35 @@ const RegistrationForm: React.FC = () => {
     };
     reader.readAsDataURL(file);
   };
-  
+
   const onSubmit = (data: FormData) => {
     if (!photo) {
       setPhotoError('Photo is required');
       return;
     }
-    
+
     if (!signature) {
       setSignatureError('Signature is required');
       return;
     }
-    
+
     if (!cv) {
       setCvError('CV/Resume is required');
       return;
     }
-    
+
     if (!workCert) {
       setWorkCertError('Work Experience Certificate is required');
       return;
     }
-    
+
     if (!qualCert) {
       setQualCertError('Higher Qualification Certificate is required');
       return;
     }
-    
+
     updatePersonalInfo(data);
-    
+
     setIsAllocating(true);
     setTimeout(() => {
       try {
@@ -222,7 +259,7 @@ const RegistrationForm: React.FC = () => {
       }
     }, 1500);
   };
-  
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto">
@@ -231,13 +268,57 @@ const RegistrationForm: React.FC = () => {
             <User className="w-6 h-6 mr-2 text-blue-600" />
             Registration Form
           </h2>
-          
+
           <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-700">
+                Union Selection
+              </h3>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Select Union <span className="text-red-500">*</span>
+                </label>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {unionOptions.map((union) => (
+                    <label
+                      key={union}
+                      className={`relative flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-lg ${
+                        selectedUnion === union
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-gray-300 bg-gray-50'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        value={union}
+                        className="hidden"
+                        {...register('union', { required: 'Please select a union' })}
+                      />
+                      <div className="flex items-center justify-center">
+                        <span className="text-sm font-medium text-gray-700">{union}</span>
+                      </div>
+                      <div
+                        className={`absolute top-2 right-2 w-4 h-4 rounded-full transition-all duration-300 ${
+                          selectedUnion === union ? 'bg-blue-600 scale-100' : 'bg-gray-300 scale-0'
+                        }`}
+                      ></div>
+                    </label>
+                  ))}
+                </div>
+                {errors.union && (
+                  <p className="text-red-500 text-xs mt-2 flex items-center">
+                    <AlertCircle className="w-3 h-3 mr-1" />
+                    {errors.union.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-700">
                 Personal Information
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -245,62 +326,72 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    className={`w-full p-2 border rounded-md ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`w-full p-2 border rounded-md ${
+                      errors.name ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     {...register('name', { required: 'Name is required' })}
                   />
                   {errors.name && (
                     <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
                   )}
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Father's Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    className={`w-full p-2 border rounded-md ${errors.fatherName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    {...register('fatherName', { required: 'Father\'s name is required' })}
+                    className={`w-full p-2 border rounded-md ${
+                      errors.fatherName ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    {...register('fatherName', { required: "Father's name is required" })}
                   />
                   {errors.fatherName && (
                     <p className="text-red-500 text-xs mt-1">{errors.fatherName.message}</p>
                   )}
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Mother's Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    className={`w-full p-2 border rounded-md ${errors.motherName ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    {...register('motherName', { required: 'Mother\'s name is required' })}
+                    className={`w-full p-2 border rounded-md ${
+                      errors.motherName ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    {...register('motherName', { required: "Mother's name is required" })}
                   />
                   {errors.motherName && (
                     <p className="text-red-500 text-xs mt-1">{errors.motherName.message}</p>
                   )}
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
-                    className={`w-full p-2 border rounded-md ${errors.dob ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`w-full p-2 border rounded-md ${
+                      errors.dob ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     {...register('dob', { required: 'Date of birth is required' })}
                   />
                   {errors.dob && (
                     <p className="text-red-500 text-xs mt-1">{errors.dob.message}</p>
                   )}
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Gender <span className="text-red-500">*</span>
                   </label>
                   <select
-                    className={`w-full p-2 border rounded-md ${errors.gender ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    className={`w-full p-2 border rounded-md ${
+                      errors.gender ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     {...register('gender', { required: 'Gender is required' })}
                   >
                     <option value="">Select Gender</option>
@@ -312,40 +403,44 @@ const RegistrationForm: React.FC = () => {
                     <p className="text-red-500 text-xs mt-1">{errors.gender.message}</p>
                   )}
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"
-                    className={`w-full p-2 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    {...register('email', { 
+                    className={`w-full p-2 border rounded-md ${
+                      errors.email ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    {...register('email', {
                       required: 'Email is required',
-                      pattern: { 
+                      pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'Invalid email address'
-                      }
+                        message: 'Invalid email address',
+                      },
                     })}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
                   )}
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Mobile Number <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    className={`w-full p-2 border rounded-md ${errors.mobile ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    {...register('mobile', { 
+                    className={`w-full p-2 border rounded-md ${
+                      errors.mobile ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    {...register('mobile', {
                       required: 'Mobile number is required',
-                      pattern: { 
+                      pattern: {
                         value: /^[0-9]{10}$/,
-                        message: 'Mobile number must be 10 digits'
-                      }
+                        message: 'Mobile number must be 10 digits',
+                      },
                     })}
                   />
                   {errors.mobile && (
@@ -359,13 +454,15 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    className={`w-full p-2 border rounded-md ${errors.aadhaarNumber ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    {...register('aadhaarNumber', { 
+                    className={`w-full p-2 border rounded-md ${
+                      errors.aadhaarNumber ? 'border-red-500' : 'border-gray-300'
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    {...register('aadhaarNumber', {
                       required: 'Aadhaar number is required',
-                      pattern: { 
+                      pattern: {
                         value: /^[0-9]{12}$/,
-                        message: 'Aadhaar number must be 12 digits'
-                      }
+                        message: 'Aadhaar number must be 12 digits',
+                      },
                     })}
                   />
                   {errors.aadhaarNumber && (
@@ -373,14 +470,16 @@ const RegistrationForm: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Address <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   rows={3}
-                  className={`w-full p-2 border rounded-md ${errors.address ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full p-2 border rounded-md ${
+                    errors.address ? 'border-red-500' : 'border-gray-300'
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500`}
                   {...register('address', { required: 'Address is required' })}
                 ></textarea>
                 {errors.address && (
@@ -432,12 +531,12 @@ const RegistrationForm: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-700">
                 Document Upload
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -446,7 +545,7 @@ const RegistrationForm: React.FC = () => {
                   <p className="text-xs text-gray-500 mb-2">
                     JPG/PNG format, max size 200KB, dimensions 3.5cm x 4.5cm
                   </p>
-                  
+
                   <div className="mb-3 flex justify-center">
                     <div className="w-32 h-40 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
                       {photo ? (
@@ -456,7 +555,7 @@ const RegistrationForm: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
                       <span>Choose Photo</span>
@@ -468,7 +567,7 @@ const RegistrationForm: React.FC = () => {
                       />
                     </label>
                   </div>
-                  
+
                   {photoError && (
                     <p className="text-red-500 text-xs mt-2 flex items-center">
                       <AlertCircle className="w-3 h-3 mr-1" />
@@ -476,7 +575,7 @@ const RegistrationForm: React.FC = () => {
                     </p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Upload Signature <span className="text-red-500">*</span>
@@ -484,7 +583,7 @@ const RegistrationForm: React.FC = () => {
                   <p className="text-xs text-gray-500 mb-2">
                     JPG/PNG format, max size 100KB, dimensions 3.5cm x 1.5cm
                   </p>
-                  
+
                   <div className="mb-3 flex justify-center">
                     <div className="w-32 h-16 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
                       {signature ? (
@@ -494,7 +593,7 @@ const RegistrationForm: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
                       <span>Choose Signature</span>
@@ -506,7 +605,7 @@ const RegistrationForm: React.FC = () => {
                       />
                     </label>
                   </div>
-                  
+
                   {signatureError && (
                     <p className="text-red-500 text-xs mt-2 flex items-center">
                       <AlertCircle className="w-3 h-3 mr-1" />
@@ -514,7 +613,7 @@ const RegistrationForm: React.FC = () => {
                     </p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Upload CV/Resume <span className="text-red-500">*</span>
@@ -522,7 +621,7 @@ const RegistrationForm: React.FC = () => {
                   <p className="text-xs text-gray-500 mb-2">
                     JPG/PNG/PDF format, max size 2MB
                   </p>
-                  
+
                   <div className="mb-3 flex justify-center">
                     <div className="w-32 h-40 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
                       {cv ? (
@@ -536,7 +635,7 @@ const RegistrationForm: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
                       <span>Choose CV/Resume</span>
@@ -548,7 +647,7 @@ const RegistrationForm: React.FC = () => {
                       />
                     </label>
                   </div>
-                  
+
                   {cvError && (
                     <p className="text-red-500 text-xs mt-2 flex items-center">
                       <AlertCircle className="w-3 h-3 mr-1" />
@@ -556,7 +655,7 @@ const RegistrationForm: React.FC = () => {
                     </p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Upload Work Experience Certificate <span className="text-red-500">*</span>
@@ -564,7 +663,7 @@ const RegistrationForm: React.FC = () => {
                   <p className="text-xs text-gray-500 mb-2">
                     JPG/PNG/PDF format, max size 2MB
                   </p>
-                  
+
                   <div className="mb-3 flex justify-center">
                     <div className="w-32 h-40 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
                       {workCert ? (
@@ -578,7 +677,7 @@ const RegistrationForm: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
                       <span>Choose Work Certificate</span>
@@ -590,7 +689,7 @@ const RegistrationForm: React.FC = () => {
                       />
                     </label>
                   </div>
-                  
+
                   {workCertError && (
                     <p className="text-red-500 text-xs mt-2 flex items-center">
                       <AlertCircle className="w-3 h-3 mr-1" />
@@ -598,7 +697,7 @@ const RegistrationForm: React.FC = () => {
                     </p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Upload Higher Qualification Certificate <span className="text-red-500">*</span>
@@ -606,7 +705,7 @@ const RegistrationForm: React.FC = () => {
                   <p className="text-xs text-gray-500 mb-2">
                     JPG/PNG/PDF format, max size 2MB
                   </p>
-                  
+
                   <div className="mb-3 flex justify-center">
                     <div className="w-32 h-40 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
                       {qualCert ? (
@@ -620,7 +719,7 @@ const RegistrationForm: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
                       <span>Choose Qualification Certificate</span>
@@ -632,7 +731,7 @@ const RegistrationForm: React.FC = () => {
                       />
                     </label>
                   </div>
-                  
+
                   {qualCertError && (
                     <p className="text-red-500 text-xs mt-2 flex items-center">
                       <AlertCircle className="w-3 h-3 mr-1" />
@@ -642,18 +741,36 @@ const RegistrationForm: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-end mt-6">
               <button
                 type="submit"
                 disabled={isAllocating}
-                className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-semibold flex items-center transition-colors duration-200 ${isAllocating ? 'opacity-70 cursor-not-allowed' : ''}`}
+                className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-semibold flex items-center transition-colors duration-200 ${
+                  isAllocating ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
               >
                 {isAllocating ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Allocating Exam Center...
                   </>

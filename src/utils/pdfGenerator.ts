@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas';
 
 interface RegistrationData {
   personalInfo: {
+    union?: string; // Added union field
     name: string;
     fatherName: string;
     motherName: string;
@@ -11,6 +12,9 @@ interface RegistrationData {
     email: string;
     mobile: string;
     address: string;
+    aadhaarNumber: string;
+    selectedPosts?: string[];
+    districtPreferences?: string[];
   };
   photo: string | null;
   signature: string | null;
@@ -63,12 +67,16 @@ const sendAdmitCardEmail = (data: RegistrationData) => {
   console.log('Sending email with admit card to:', data.personalInfo.email);
   
   // This is a mock function that would normally call an email service
-  // emailjs.send('service_id', 'template_id', {
-  //   to_email: data.personalInfo.email,
-  //   to_name: data.personalInfo.name,
-  //   application_number: data.applicationNumber,
-  //   exam_center: data.examCenter,
-  //   exam_date: '05/03/2024',
-  //   exam_shift: data.examShift
-  // });
+  // Example with union field included:
+  /*
+  emailjs.send('service_id', 'template_id', {
+    to_email: data.personalInfo.email,
+    to_name: data.personalInfo.name,
+    application_number: data.applicationNumber,
+    exam_center: data.examCenter,
+    exam_date: '12/06/2025',
+    exam_shift: data.examShift,
+    union: data.personalInfo.union || 'Harit Union' // Include union in email
+  });
+  */
 };

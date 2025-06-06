@@ -170,7 +170,7 @@ const PaymentVerification: React.FC = () => {
                 <h4 className="font-semibold text-yellow-800 mb-2">How to make the payment:</h4>
                 <ol className="list-decimal list-inside text-sm text-yellow-800 space-y-1">
                   <li>Scan the QR code or use the UPI ID: examportal@ybl</li>
-                  <li>Make a payment of ₹500.00</li>
+                  <li>Make a payment of ₹600.00</li>
                   <li>Note down the transaction number</li>
                   <li>Enter the transaction details below to verify your payment</li>
                 </ol>
