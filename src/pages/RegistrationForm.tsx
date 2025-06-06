@@ -32,12 +32,13 @@ const postOptions = [
 
 const districtOptions = [
   'Patna',
-  'Vaishali',
-  'Samasatipur',
-  'Begusarai',
-  'Nalanda',
-  'Buxar',
-  'Bhojpur'
+  'Saran',
+  'Gopalganj',
+  'Siwan',
+  'Muzaffarpur',
+  'West Champaran',
+  'East Champaran',
+  'Sheohar'
 ];
 
 const RegistrationForm: React.FC = () => {

@@ -7,7 +7,7 @@ const Homepage: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <section className="mb-12">
         <div className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white rounded-lg p-8 shadow-lg">
-          <h1 className="text-3xl font-bold mb-4">Computer Based Test (CBT) - 2024</h1>
+          <h1 className="text-3xl font-bold mb-4">Computer Based Test (CBT) - 2025</h1>
           <p className="text-xl mb-6">Generate your admit card by completing the registration process</p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link 
