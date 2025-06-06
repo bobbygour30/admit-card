@@ -76,7 +76,7 @@ const PaymentVerification: React.FC = () => {
                 </div>
                 <div className="ml-3">
                   <p className="text-sm text-blue-700">
-                    Your registration information has been saved. Please complete the payment of ₹500 to proceed.
+                    Your registration information has been saved. Please complete the payment of ₹600 to proceed.
                   </p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ const PaymentVerification: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Amount:</p>
-                  <p className="font-semibold">₹500.00</p>
+                  <p className="font-semibold">₹600.00</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Application Number:</p>

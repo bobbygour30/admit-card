@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRegistration } from '../contexts/RegistrationContext';
 import { useForm } from 'react-hook-form';
@@ -54,8 +54,14 @@ const RegistrationForm: React.FC = () => {
   
   const [photo, setPhoto] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
+  const [cv, setCv] = useState<string | null>(null);
+  const [workCert, setWorkCert] = useState<string | null>(null);
+  const [qualCert, setQualCert] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [signatureError, setSignatureError] = useState<string | null>(null);
+  const [cvError, setCvError] = useState<string | null>(null);
+  const [workCertError, setWorkCertError] = useState<string | null>(null);
+  const [qualCertError, setQualCertError] = useState<string | null>(null);
   const [isAllocating, setIsAllocating] = useState(false);
   
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,6 +112,75 @@ const RegistrationForm: React.FC = () => {
     reader.readAsDataURL(file);
   };
   
+  const handleCvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCvError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 2 * 1024 * 1024) {
+      setCvError('File size should not exceed 2MB');
+      return;
+    }
+    
+    if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+      setCvError('Only JPG, PNG, or PDF formats are accepted');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setCv(result);
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  const handleWorkCertUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWorkCertError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 2 * 1024 * 1024) {
+      setWorkCertError('File size should not exceed 2MB');
+      return;
+    }
+    
+    if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+      setWorkCertError('Only JPG, PNG, or PDF formats are accepted');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setWorkCert(result);
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  const handleQualCertUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQualCertError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 2 * 1024 * 1024) {
+      setQualCertError('File size should not exceed 2MB');
+      return;
+    }
+    
+    if (!['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+      setQualCertError('Only JPG, PNG, or PDF formats are accepted');
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setQualCert(result);
+    };
+    reader.readAsDataURL(file);
+  };
+  
   const onSubmit = (data: FormData) => {
     if (!photo) {
       setPhotoError('Photo is required');
@@ -114,6 +189,21 @@ const RegistrationForm: React.FC = () => {
     
     if (!signature) {
       setSignatureError('Signature is required');
+      return;
+    }
+    
+    if (!cv) {
+      setCvError('CV/Resume is required');
+      return;
+    }
+    
+    if (!workCert) {
+      setWorkCertError('Work Experience Certificate is required');
+      return;
+    }
+    
+    if (!qualCert) {
+      setQualCertError('Higher Qualification Certificate is required');
       return;
     }
     
@@ -345,7 +435,7 @@ const RegistrationForm: React.FC = () => {
             
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-4 pb-2 border-b text-gray-700">
-                Photo & Signature Upload
+                Document Upload
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -373,7 +463,7 @@ const RegistrationForm: React.FC = () => {
                       <input
                         type="file"
                         className="hidden"
-                        accept="image/jpeg, image/png"
+                        accept="image/jpeg,image/png"
                         onChange={handlePhotoUpload}
                       />
                     </label>
@@ -411,7 +501,7 @@ const RegistrationForm: React.FC = () => {
                       <input
                         type="file"
                         className="hidden"
-                        accept="image/jpeg, image/png"
+                        accept="image/jpeg,image/png"
                         onChange={handleSignatureUpload}
                       />
                     </label>
@@ -421,6 +511,132 @@ const RegistrationForm: React.FC = () => {
                     <p className="text-red-500 text-xs mt-2 flex items-center">
                       <AlertCircle className="w-3 h-3 mr-1" />
                       {signatureError}
+                    </p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Upload CV/Resume <span className="text-red-500">*</span>
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    JPG/PNG/PDF format, max size 2MB
+                  </p>
+                  
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-32 h-40 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                      {cv ? (
+                        cv.startsWith('data:image') ? (
+                          <img src={cv} alt="Uploaded CV" className="max-w-full max-h-full" />
+                        ) : (
+                          <FileText className="w-8 h-8 text-gray-400" />
+                        )
+                      ) : (
+                        <Upload className="w-8 h-8 text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center">
+                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                      <span>Choose CV/Resume</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/jpeg,image/png,application/pdf"
+                        onChange={handleCvUpload}
+                      />
+                    </label>
+                  </div>
+                  
+                  {cvError && (
+                    <p className="text-red-500 text-xs mt-2 flex items-center">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      {cvError}
+                    </p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Upload Work Experience Certificate <span className="text-red-500">*</span>
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    JPG/PNG/PDF format, max size 2MB
+                  </p>
+                  
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-32 h-40 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                      {workCert ? (
+                        workCert.startsWith('data:image') ? (
+                          <img src={workCert} alt="Uploaded work certificate" className="max-w-full max-h-full" />
+                        ) : (
+                          <FileText className="w-8 h-8 text-gray-400" />
+                        )
+                      ) : (
+                        <Upload className="w-8 h-8 text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center">
+                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                      <span>Choose Work Certificate</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/jpeg,image/png,application/pdf"
+                        onChange={handleWorkCertUpload}
+                      />
+                    </label>
+                  </div>
+                  
+                  {workCertError && (
+                    <p className="text-red-500 text-xs mt-2 flex items-center">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      {workCertError}
+                    </p>
+                  )}
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Upload Higher Qualification Certificate <span className="text-red-500">*</span>
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    JPG/PNG/PDF format, max size 2MB
+                  </p>
+                  
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-32 h-40 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                      {qualCert ? (
+                        qualCert.startsWith('data:image') ? (
+                          <img src={qualCert} alt="Uploaded qualification certificate" className="max-w-full max-h-full" />
+                        ) : (
+                          <FileText className="w-8 h-8 text-gray-400" />
+                        )
+                      ) : (
+                        <Upload className="w-8 h-8 text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center">
+                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                      <span>Choose Qualification Certificate</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/jpeg,image/png,application/pdf"
+                        onChange={handleQualCertUpload}
+                      />
+                    </label>
+                  </div>
+                  
+                  {qualCertError && (
+                    <p className="text-red-500 text-xs mt-2 flex items-center">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      {qualCertError}
                     </p>
                   )}
                 </div>
@@ -435,8 +651,8 @@ const RegistrationForm: React.FC = () => {
               >
                 {isAllocating ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white\" xmlns="http://www.w3.org/2000/svg\" fill="none\" viewBox="0 0 24 24">
-                      <circle className="opacity-25\" cx="12\" cy="12\" r="10\" stroke="currentColor\" strokeWidth="4"></circle>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     Allocating Exam Center...

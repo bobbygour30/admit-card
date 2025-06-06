@@ -272,17 +272,6 @@ const AdmitCardDownload: React.FC = () => {
                   <div className="bg-gray-100 p-4 border-b">
                     <div className="flex flex-col md:flex-row items-center justify-between">
                       <div className="flex items-center mb-4 md:mb-0">
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-800">
-                            DAV College Managing Committee
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            Chitra Gupta Road
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            New Delhi-110055
-                          </p>
-                        </div>
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-gray-600">

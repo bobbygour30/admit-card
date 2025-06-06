@@ -12,8 +12,8 @@ const Header: React.FC = () => {
         <div className="flex items-center mb-3 md:mb-0">
           <BookOpen className="w-8 h-8 mr-2" />
           <div>
-            <h1 className="text-xl font-bold">Exam Admit Card Portal</h1>
-            <p className="text-sm text-blue-100">Computer Based Test (CBT)</p>
+            <h1 className="text-xl font-bold">Application form for Recruitment to Various Posts for</h1>
+            <p className="text-sm text-blue-100">VARIOUS VEGETABLE COOPREATIVES SOCIETIES</p>
           </div>
         </div>
         <nav className="flex space-x-4">
