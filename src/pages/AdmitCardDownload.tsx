@@ -182,7 +182,7 @@ const AdmitCardDownload: React.FC = () => {
                     Email Support
                   </h4>
                   <p className="text-sm text-gray-600">
-                    support@examportal.com
+                    writetogsgspl@gmail.com
                   </p>
                 </div>
                 <div className="border rounded-md p-3">
@@ -190,7 +190,7 @@ const AdmitCardDownload: React.FC = () => {
                     Phone Support
                   </h4>
                   <p className="text-sm text-gray-600">
-                    +91 1234567890 (10 AM - 6 PM)
+                    01169270767
                   </p>
                 </div>
               </div>
