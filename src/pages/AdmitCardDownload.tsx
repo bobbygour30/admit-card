@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { useRegistration } from "../contexts/RegistrationContext";
-import { FileText, Search, Download, Send, AlertCircle } from "lucide-react";
+import { FileText, Search, Download, Send, AlertCircle, CheckCircle } from "lucide-react";
 import { generatePDF } from "../utils/pdfGenerator";
-import type { RegistrationData } from "../types"; // Import shared type
+import type { RegistrationData } from "../types";
 
 const AdmitCardDownload: React.FC = () => {
   const { registrationData } = useRegistration() as { registrationData: RegistrationData };
@@ -25,6 +25,16 @@ const AdmitCardDownload: React.FC = () => {
     setLoading(true);
 
     setTimeout(() => {
+      // Check if user is from Tirhut Union
+      if (registrationData.personalInfo.union === "Tirhut Union") {
+        setError(
+          "Admit card is not available for Tirhut Union applicants at this time. You will receive it via email after 18th June 2025."
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Proceed for Harit Union or other users
       if (
         registrationData.applicationNumber &&
         searchQuery === registrationData.applicationNumber
@@ -243,7 +253,7 @@ const AdmitCardDownload: React.FC = () => {
                     </button>
                   ) : (
                     <div className="bg-green-100 text-green-800 px-4 py-2 rounded-md flex items-center">
-                      <CheckIcon className="w-4 h-4 mr-2" />
+                      <CheckCircle className="w-4 h-4 mr-2" />
                       Email Sent!
                     </div>
                   )}
@@ -492,25 +502,6 @@ const AdmitCardDownload: React.FC = () => {
         )}
       </div>
     </div>
-  );
-};
-
-const CheckIcon: React.FC<{ className?: string }> = ({ className }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
   );
 };
 
