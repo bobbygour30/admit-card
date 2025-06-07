@@ -1,9 +1,9 @@
-import  { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRegistration } from '../contexts/RegistrationContext';
 import { useForm } from 'react-hook-form';
-import { ChevronRight, User, FileText, Upload, AlertCircle } from 'lucide-react';
+import { ChevronRight, User, FileText, Upload, AlertCircle, X } from 'lucide-react';
 
 interface FormData {
   union: string;
@@ -90,15 +90,17 @@ const RegistrationForm: React.FC = () => {
   const [workCertError, setWorkCertError] = useState<string | null>(null);
   const [qualCertError, setQualCertError] = useState<string | null>(null);
   const [isAllocating, setIsAllocating] = useState(false);
+  const [showTirhutMessage, setShowTirhutMessage] = useState(false);
 
   const selectedUnion = watch('union');
 
   // Dynamically select district options based on union
   const districtOptions = selectedUnion === 'Tirhut Union' ? tirhutDistrictOptions : haritDistrictOptions;
 
-  // Reset districtPreferences when union changes to prevent invalid selections
-  React.useEffect(() => {
+  // Reset districtPreferences when union changes and handle Tirhut message
+  useEffect(() => {
     resetField('districtPreferences');
+    setShowTirhutMessage(selectedUnion === 'Tirhut Union');
   }, [selectedUnion, resetField]);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,6 +221,10 @@ const RegistrationForm: React.FC = () => {
   };
 
   const onSubmit = (data: FormData) => {
+    if (selectedUnion === 'Tirhut Union') {
+      return; // Prevent form submission for Tirhut Union
+    }
+
     if (!photo) {
       setPhotoError('Photo is required');
       return;
@@ -261,13 +267,32 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 relative">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
             <User className="w-6 h-6 mr-2 text-blue-600" />
             Registration Form
           </h2>
+
+          {showTirhutMessage && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 relative transform transition-all animate-fade-in">
+                <button
+                  onClick={() => setShowTirhutMessage(false)}
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                <div className="text-center">
+                  <h3 className="text-xl font-semibold text-blue-600 mb-4">Tirhut Union Notice</h3>
+                  <p className="text-gray-700 mb-4">
+                    Trihut Union admit cards will be available after one week. You will be notified by email.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-8">
@@ -326,9 +351,10 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.name ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('name', { required: 'Name is required' })}
                   />
                   {errors.name && (
@@ -342,9 +368,10 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.fatherName ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('fatherName', { required: "Father's name is required" })}
                   />
                   {errors.fatherName && (
@@ -358,9 +385,10 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.motherName ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('motherName', { required: "Mother's name is required" })}
                   />
                   {errors.motherName && (
@@ -374,9 +402,10 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="date"
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.dob ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('dob', { required: 'Date of birth is required' })}
                   />
                   {errors.dob && (
@@ -389,9 +418,10 @@ const RegistrationForm: React.FC = () => {
                     Gender <span className="text-red-500">*</span>
                   </label>
                   <select
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.gender ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('gender', { required: 'Gender is required' })}
                   >
                     <option value="">Select Gender</option>
@@ -410,9 +440,10 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="email"
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.email ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('email', {
                       required: 'Email is required',
                       pattern: {
@@ -432,9 +463,10 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.mobile ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('mobile', {
                       required: 'Mobile number is required',
                       pattern: {
@@ -454,9 +486,10 @@ const RegistrationForm: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    disabled={selectedUnion === 'Tirhut Union'}
                     className={`w-full p-2 border rounded-md ${
                       errors.aadhaarNumber ? 'border-red-500' : 'border-gray-300'
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                     {...register('aadhaarNumber', {
                       required: 'Aadhaar number is required',
                       pattern: {
@@ -477,9 +510,10 @@ const RegistrationForm: React.FC = () => {
                 </label>
                 <textarea
                   rows={3}
+                  disabled={selectedUnion === 'Tirhut Union'}
                   className={`w-full p-2 border rounded-md ${
                     errors.address ? 'border-red-500' : 'border-gray-300'
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
                   {...register('address', { required: 'Address is required' })}
                 ></textarea>
                 {errors.address && (
@@ -499,7 +533,8 @@ const RegistrationForm: React.FC = () => {
                       type="checkbox"
                       id={post}
                       value={post}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      disabled={selectedUnion === 'Tirhut Union'}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:cursor-not-allowed"
                       {...register('selectedPosts')}
                     />
                     <label htmlFor={post} className="ml-2 text-sm text-gray-700">
@@ -521,7 +556,8 @@ const RegistrationForm: React.FC = () => {
                       type="checkbox"
                       id={district}
                       value={district}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      disabled={selectedUnion === 'Tirhut Union'}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:cursor-not-allowed"
                       {...register('districtPreferences')}
                     />
                     <label htmlFor={district} className="ml-2 text-sm text-gray-700">
@@ -557,12 +593,13 @@ const RegistrationForm: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                    <label className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200 ${selectedUnion === 'Tirhut Union' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                       <span>Choose Photo</span>
                       <input
                         type="file"
                         className="hidden"
                         accept="image/jpeg,image/png"
+                        disabled={selectedUnion === 'Tirhut Union'}
                         onChange={handlePhotoUpload}
                       />
                     </label>
@@ -595,12 +632,13 @@ const RegistrationForm: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                    <label className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200 ${selectedUnion === 'Tirhut Union' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                       <span>Choose Signature</span>
                       <input
                         type="file"
                         className="hidden"
                         accept="image/jpeg,image/png"
+                        disabled={selectedUnion === 'Tirhut Union'}
                         onChange={handleSignatureUpload}
                       />
                     </label>
@@ -637,12 +675,13 @@ const RegistrationForm: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                    <label className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200 ${selectedUnion === 'Tirhut Union' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                       <span>Choose CV/Resume</span>
                       <input
                         type="file"
                         className="hidden"
                         accept="image/jpeg,image/png,application/pdf"
+                        disabled={selectedUnion === 'Tirhut Union'}
                         onChange={handleCvUpload}
                       />
                     </label>
@@ -679,12 +718,13 @@ const RegistrationForm: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                    <label className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200 ${selectedUnion === 'Tirhut Union' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                       <span>Choose Work Certificate</span>
                       <input
                         type="file"
                         className="hidden"
                         accept="image/jpeg,image/png,application/pdf"
+                        disabled={selectedUnion === 'Tirhut Union'}
                         onChange={handleWorkCertUpload}
                       />
                     </label>
@@ -721,12 +761,13 @@ const RegistrationForm: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200">
+                    <label className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm cursor-pointer transition-colors duration-200 ${selectedUnion === 'Tirhut Union' ? 'opacity-50 cursor-not-allowed' : ''}`}>
                       <span>Choose Qualification Certificate</span>
                       <input
                         type="file"
                         className="hidden"
                         accept="image/jpeg,image/png,application/pdf"
+                        disabled={selectedUnion === 'Tirhut Union'}
                         onChange={handleQualCertUpload}
                       />
                     </label>
@@ -745,9 +786,9 @@ const RegistrationForm: React.FC = () => {
             <div className="flex justify-end mt-6">
               <button
                 type="submit"
-                disabled={isAllocating}
+                disabled={isAllocating || selectedUnion === 'Tirhut Union'}
                 className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-semibold flex items-center transition-colors duration-200 ${
-                  isAllocating ? 'opacity-70 cursor-not-allowed' : ''
+                  isAllocating || selectedUnion === 'Tirhut Union' ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
               >
                 {isAllocating ? (
