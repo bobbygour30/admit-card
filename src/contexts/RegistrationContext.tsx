@@ -20,6 +20,7 @@ interface Shift {
 
 interface RegistrationData {
   personalInfo: {
+    union: string;
     name: string;
     fatherName: string;
     motherName: string;
@@ -47,6 +48,7 @@ interface RegistrationData {
 
 const defaultRegistrationData: RegistrationData = {
   personalInfo: {
+    union: '',
     name: '',
     fatherName: '',
     motherName: '',
